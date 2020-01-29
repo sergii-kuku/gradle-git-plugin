@@ -1,0 +1,13 @@
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath("coding.zoo:gradle-git-plugin:1.0.0-SNAPSHOT")
+    }
+}
+
+plugins {
+    id('coding.zoo.gradle-git-plugin')
+}
+
