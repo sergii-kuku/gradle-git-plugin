@@ -23,7 +23,7 @@ public class GitDataPluginExtension {
     }
 
     public String getProjectVersionWithBranch() {
-        return parseVersionWithBranch(getCurrentBranchName().replace("/", "-"));
+        return parseVersionWithBranch(getCurrentBranchName());
     }
 
     public String getProjectVersionWithFullBranch() {
@@ -33,7 +33,11 @@ public class GitDataPluginExtension {
     private String parseVersionWithBranch(String branchName) {
         String version = plugin.getProjectVersion();
         if (plugin.getGitInfo() != null && plugin.getGitInfo().getCurrentBranchType() == BranchType.DEV_BRANCH) {
-            return version.replace("-SNAPSHOT", "-" + branchName + "-SNAPSHOT");
+            if (version.endsWith("-SNAPSHOT")) {
+                return version.replace("-SNAPSHOT", "-" + branchName + "-SNAPSHOT");
+            } else {
+                return version + "-" + branchName;
+            }
         } else {
             return version;
         }

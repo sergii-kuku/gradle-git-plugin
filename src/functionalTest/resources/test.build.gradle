@@ -8,6 +8,5 @@ buildscript {
 }
 
 plugins {
-    id('lazy.zoo.gradle.git-data-plugin')
+    id("lazy.zoo.gradle.git-data-plugin")
 }
-

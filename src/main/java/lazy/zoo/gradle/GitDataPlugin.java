@@ -2,7 +2,6 @@ package lazy.zoo.gradle;
 
 import lazy.zoo.gradle.extension.GitDataPluginExtension;
 import lazy.zoo.gradle.git.GitInfo;
-import lazy.zoo.gradle.utils.ValidationUtils;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -12,8 +11,6 @@ public class GitDataPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        ValidationUtils.checkVersion(project);
-
         project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
         this.projectVersion = project.getVersion().toString();
         this.gitInfo = GitInfo.getGitInfo(project, project.getName(), project.getProperties().get("branchName") != null ? (String) project.getProperties().get("branchName") : null);
