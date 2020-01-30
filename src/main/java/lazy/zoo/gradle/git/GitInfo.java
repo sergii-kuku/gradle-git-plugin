@@ -10,10 +10,12 @@ public class GitInfo {
     private static final String UNIDENTIFIED_BRANCH = "unidentified-git-branch";
     private final BranchType currentBranchType;
     private final String currentBranchName;
+    private final String currentBranchFullName;
 
-    private GitInfo(BranchType currentBranchType, String currentBranchName) {
+    private GitInfo(BranchType currentBranchType, String currentBranchName, String currentBranchFullName) {
         this.currentBranchType = currentBranchType;
         this.currentBranchName = currentBranchName;
+        this.currentBranchFullName = currentBranchFullName;
     }
 
     public BranchType getCurrentBranchType() {
@@ -22,6 +24,10 @@ public class GitInfo {
 
     public String getCurrentBranchName() {
         return currentBranchName;
+    }
+
+    public String getCurrentBranchFullName() {
+        return currentBranchFullName;
     }
 
     public static GitInfo getGitInfo(Project project, String projectName, String branchName) {
@@ -37,10 +43,10 @@ public class GitInfo {
             currentBranch = branchName;
         }
 
-        return parseBranchType(projectName, currentBranch.replaceAll("^.*/", ""));
+        return parseBranchType(projectName, currentBranch.replaceAll("^.*/", ""), currentBranch);
     }
 
-    private static GitInfo parseBranchType(String projectName, String currentBranch) {
+    private static GitInfo parseBranchType(String projectName, String currentBranch, String currentBranchFull) {
         BranchType branchType;
         if ("master".equals(currentBranch)) {
             branchType = BranchType.MASTER;
@@ -52,6 +58,6 @@ public class GitInfo {
             branchType = BranchType.DEV_BRANCH;
         }
 
-        return new GitInfo(branchType, currentBranch);
+        return new GitInfo(branchType, currentBranch, currentBranchFull);
     }
 }

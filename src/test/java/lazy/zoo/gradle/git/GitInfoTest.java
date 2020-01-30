@@ -32,6 +32,7 @@ public class GitInfoTest {
         gitInfo = GitInfo.getGitInfo(project, project.getName(), "origin/feature-branch");
         Assert.assertEquals(DEV_BRANCH, gitInfo.getCurrentBranchType());
         Assert.assertEquals("feature-branch", gitInfo.getCurrentBranchName());
+        Assert.assertEquals("origin/feature-branch", gitInfo.getCurrentBranchFullName());
 
         gitInfo = GitInfo.getGitInfo(project, project.getName(), "master");
         Assert.assertEquals(MASTER, gitInfo.getCurrentBranchType());

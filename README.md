@@ -1,4 +1,5 @@
 # Gradle Git Plugin
+Lightweight plugin to help with project versioning based on git branch information.
 
 ### Current plugin version: 1.0.0-SNAPSHOT
 
@@ -37,23 +38,25 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("coding.zoo:gradle-git-plugin:1.0.0-SNAPSHOT")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.0.0-SNAPSHOT")
     }
 }
 
-apply plugin: 'coding.zoo.gradle-git-plugin'
+apply plugin: 'lazy.zoo.gradle.git-data-plugin'
 ```
 You can also upload the plugin jar artifact to you personal/company registry (e.g. artifactory). 
 Then add the reference to it the buildscript section of your project.
 
 ## Tasks
-`gitInfo` task is registered to display the current git info 
+`gitData` task is registered to display the current git branch info 
 
 ## Get data from the plugin
 The plugin data is accessible via it's extension: gitInfo
 Just call the below from your gradle build:
 ```
-gitInfo.getCurrentBranchType()
-gitInfo.getCurrentBranchName()
-gitInfo.getProjectVersionWithBranch()
+gitInfo.getCurrentBranchType() -> one of: MASTER/DEV/RELEASE
+gitInfo.getCurrentBranchName() -> name of the branch, without the first grouping/folder prefix (e.g. feature/foobar becomes foobar)
+gitInfo.getCurrentBranchFullName() -> full name of the branch (e.g. feature/foobar stays feature/foobar)
+gitInfo.getProjectVersionWithBranch() -> version with branch name (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-foobar-SNAPSHOT)
+gitInfo.getProjectVersionWithFullBranch() -> version with full branch name, replacing all slashes with dashes (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-feature-foobar-SNAPSHOT)
 ```
