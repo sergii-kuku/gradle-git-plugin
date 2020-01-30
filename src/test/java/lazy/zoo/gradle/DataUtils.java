@@ -1,4 +1,4 @@
-package coding.zoo;
+package lazy.zoo.gradle;
 
 import org.gradle.api.Project;
 import org.gradle.testfixtures.ProjectBuilder;
@@ -12,7 +12,7 @@ public final class DataUtils {
         Project project = ProjectBuilder.builder().withName(PROJECT_NAME).build();
         project.setGroup(PROJECT_GROUP);
         project.setVersion(PROJECT_ART_VER);
-        project.getPlugins().apply("coding.zoo.gradle-git-plugin");
+        project.getPlugins().apply("lazy.zoo.gradle.git-data-plugin");
         return project;
     }
 }

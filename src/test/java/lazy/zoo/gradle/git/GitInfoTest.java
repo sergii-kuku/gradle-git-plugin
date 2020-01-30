@@ -1,20 +1,20 @@
-package coding.zoo.git;
+package lazy.zoo.gradle.git;
 
-import coding.zoo.DataUtils;
-import coding.zoo.extension.GradleGitPluginExtension;
+import lazy.zoo.gradle.DataUtils;
+import lazy.zoo.gradle.extension.GitDataPluginExtension;
 import org.gradle.api.Project;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static coding.zoo.git.BranchType.DEV_BRANCH;
-import static coding.zoo.git.BranchType.MASTER;
-import static coding.zoo.git.BranchType.RELEASE_BRANCH;
+import static lazy.zoo.gradle.git.BranchType.DEV_BRANCH;
+import static lazy.zoo.gradle.git.BranchType.MASTER;
+import static lazy.zoo.gradle.git.BranchType.RELEASE_BRANCH;
 
 public class GitInfoTest {
     @Test
     public void testGetGitInfo() {
         Project project = DataUtils.getProject();
-        final GradleGitPluginExtension ext = project.getExtensions().getByType(GradleGitPluginExtension.class);
+        final GitDataPluginExtension ext = project.getExtensions().getByType(GitDataPluginExtension.class);
         Assert.assertNotNull(ext.getCurrentBranchType());
         Assert.assertNotNull(ext.getCurrentBranchName());
         Assert.assertEquals(DEV_BRANCH.name(), ext.getCurrentBranchType());

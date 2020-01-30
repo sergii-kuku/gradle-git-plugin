@@ -1,4 +1,4 @@
-package coding.zoo.utils;
+package lazy.zoo.gradle.utils;
 
 public class ExecuteResult {
     private final int exitVal;

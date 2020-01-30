@@ -1,7 +1,7 @@
-package coding.zoo.git;
+package lazy.zoo.gradle.git;
 
-import coding.zoo.utils.Cmd;
-import coding.zoo.utils.ExecuteResult;
+import lazy.zoo.gradle.utils.Cmd;
+import lazy.zoo.gradle.utils.ExecuteResult;
 import org.gradle.api.Project;
 
 import java.util.Arrays;

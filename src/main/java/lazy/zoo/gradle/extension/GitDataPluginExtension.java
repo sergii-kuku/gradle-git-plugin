@@ -1,12 +1,12 @@
-package coding.zoo.extension;
+package lazy.zoo.gradle.extension;
 
-import coding.zoo.GradleGitPlugin;
-import coding.zoo.git.BranchType;
+import lazy.zoo.gradle.GitDataPlugin;
+import lazy.zoo.gradle.git.BranchType;
 
-public class GradleGitPluginExtension {
-    private final GradleGitPlugin plugin;
+public class GitDataPluginExtension {
+    private final GitDataPlugin plugin;
 
-    public GradleGitPluginExtension(GradleGitPlugin plugin) {
+    public GitDataPluginExtension(GitDataPlugin plugin) {
         this.plugin = plugin;
     }
 

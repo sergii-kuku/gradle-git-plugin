@@ -3,11 +3,11 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("coding.zoo:gradle-git-plugin:1.0.0-SNAPSHOT")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.0.0-SNAPSHOT")
     }
 }
 
 plugins {
-    id('coding.zoo.gradle-git-plugin')
+    id('lazy.zoo.gradle.git-data-plugin')
 }
 

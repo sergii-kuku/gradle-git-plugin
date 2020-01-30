@@ -3,7 +3,7 @@ plugins {
     id("maven")
 }
 
-group = "coding.zoo"
+group = "lazy.zoo.gradle"
 version = "1.0.0-SNAPSHOT"
 val junitVersion = "4.12"
 val javaVersion = JavaVersion.VERSION_1_8
@@ -24,8 +24,8 @@ dependencies {
 
 gradlePlugin {
     val scaffold by plugins.creating {
-        id = "coding.zoo.gradle-git-plugin"
-        implementationClass = "coding.zoo.GradleGitPlugin"
+        id = "lazy.zoo.gradle.git-data-plugin"
+        implementationClass = "lazy.zoo.gradle.GitDataPlugin"
     }
 }
 

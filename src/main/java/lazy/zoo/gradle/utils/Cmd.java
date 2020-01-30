@@ -1,4 +1,4 @@
-package coding.zoo.utils;
+package lazy.zoo.gradle.utils;
 
 import org.gradle.api.Project;
 import org.gradle.process.ExecResult;

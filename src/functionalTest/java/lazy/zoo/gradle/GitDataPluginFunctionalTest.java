@@ -1,4 +1,4 @@
-package coding.zoo;
+package lazy.zoo.gradle;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class GradleGitPluginFunctionalTest {
+public class GitDataPluginFunctionalTest {
     @Test
     public void canRunTask() throws IOException {
         // Setup the test build
@@ -31,7 +31,7 @@ public class GradleGitPluginFunctionalTest {
         GradleRunner showGitInfo = GradleRunner.create();
         showGitInfo.forwardOutput();
         showGitInfo.withPluginClasspath();
-        showGitInfo.withArguments("gitInfo");
+        showGitInfo.withArguments("gitData");
         showGitInfo.withProjectDir(projectDir);
         BuildResult showPluginsResult = showGitInfo.build();
         assertTrue(showPluginsResult.getOutput().contains("currentBranchType"));

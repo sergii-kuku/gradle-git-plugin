@@ -1,1 +1,1 @@
-rootProject.name = "gradle-git-plugin"
+rootProject.name = "git-data-plugin"
