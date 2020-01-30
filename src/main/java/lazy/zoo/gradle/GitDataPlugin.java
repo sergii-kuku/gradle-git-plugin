@@ -12,8 +12,7 @@ public class GitDataPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        ValidationUtils.checkProperty("name", "current project", project.getName());
-        ValidationUtils.checkProperty("version", project.getName(), project.getVersion().toString());
+        ValidationUtils.checkVersion(project);
 
         project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
         this.projectVersion = project.getVersion().toString();

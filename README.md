@@ -54,9 +54,9 @@ Then add the reference to it the buildscript section of your project.
 The plugin data is accessible via it's extension: gitInfo
 Just call the below from your gradle build:
 ```
-gitInfo.getCurrentBranchType() -> one of: MASTER/DEV/RELEASE
-gitInfo.getCurrentBranchName() -> name of the branch, without the first grouping/folder prefix (e.g. feature/foobar becomes foobar)
-gitInfo.getCurrentBranchFullName() -> full name of the branch (e.g. feature/foobar stays feature/foobar)
-gitInfo.getProjectVersionWithBranch() -> version with branch name (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-foobar-SNAPSHOT)
-gitInfo.getProjectVersionWithFullBranch() -> version with full branch name, replacing all slashes with dashes (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-feature-foobar-SNAPSHOT)
+gitData.getCurrentBranchType() -> one of: MASTER/DEV/RELEASE
+gitData.getCurrentBranchName() -> name of the branch, without the first grouping/folder prefix (e.g. feature/foobar becomes foobar)
+gitData.getCurrentBranchFullName() -> full name of the branch (e.g. feature/foobar stays feature/foobar)
+gitData.getProjectVersionWithBranch() -> version with branch name (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-foobar-SNAPSHOT)
+gitData.getProjectVersionWithFullBranch() -> version with full branch name, replacing all slashes with dashes (e.g. feature/foobar branch with version 1.1.0-SNAPSHOT becomes 1.1.0-feature-foobar-SNAPSHOT)
 ```
