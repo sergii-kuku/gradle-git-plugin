@@ -1,6 +1,6 @@
 plugins {
-    id("java-gradle-plugin")
     id("com.gradle.plugin-publish") version "0.10.1"
+    id("java-gradle-plugin")
     id("maven")
 }
 
@@ -23,12 +23,6 @@ dependencies {
     testImplementation("junit:junit:$junitVersion")
 }
 
-pluginBundle {
-    website = "https://github.com/sergii-kuku/gradle-git-plugin"
-    vcsUrl = "https://github.com/sergii-kuku/gradle-git-plugin.git"
-    tags = listOf("git", "versioning")
-}
-
 gradlePlugin {
     plugins {
         create("gitDataPlugin") {
@@ -38,6 +32,12 @@ gradlePlugin {
             implementationClass = "lazy.zoo.gradle.GitDataPlugin"
         }
     }
+}
+
+pluginBundle {
+    website = "https://github.com/sergii-kuku/gradle-git-plugin"
+    vcsUrl = "https://github.com/sergii-kuku/gradle-git-plugin.git"
+    tags = listOf("git", "versioning")
 }
 
 // TASKS
