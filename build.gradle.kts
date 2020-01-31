@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "lazy.zoo.gradle"
-version = "1.0.0"
+version = "1.1.0-SNAPSHOT"
 val junitVersion = "4.12"
 val javaVersion = JavaVersion.VERSION_1_8
 
