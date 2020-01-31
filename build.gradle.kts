@@ -1,10 +1,13 @@
+import org.gradle.internal.impldep.org.apache.ivy.osgi.updatesite.PluginAdapter
+
 plugins {
     id("java-gradle-plugin")
+    id("com.gradle.plugin-publish") version "0.10.1"
     id("maven")
 }
 
 group = "lazy.zoo.gradle"
-version = "1.0.0-SNAPSHOT"
+version = "1.0.0"
 val junitVersion = "4.12"
 val javaVersion = JavaVersion.VERSION_1_8
 
@@ -22,10 +25,20 @@ dependencies {
     testImplementation("junit:junit:$junitVersion")
 }
 
+pluginBundle {
+    website = "https://github.com/sergii-kuku/gradle-git-plugin"
+    vcsUrl = "https://github.com/sergii-kuku/gradle-git-plugin.git"
+    tags = listOf("git", "versioning")
+}
+
 gradlePlugin {
-    val scaffold by plugins.creating {
-        id = "lazy.zoo.gradle.git-data-plugin"
-        implementationClass = "lazy.zoo.gradle.GitDataPlugin"
+    plugins {
+        create("gitDataPlugin") {
+            id = "lazy.zoo.gradle.git-data-plugin"
+            displayName = "Git Data Plugin"
+            description = "Lightweight plugin to get current git branch information and help with project versioning based on it"
+            implementationClass = "lazy.zoo.gradle.GitDataPlugin"
+        }
     }
 }
 
