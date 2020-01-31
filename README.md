@@ -1,5 +1,5 @@
 # Gradle Git Plugin
-### Current plugin version: 1.0.0-SNAPSHOT
+### Current plugin release version: 1.0.0
 
 ## Description
 Lightweight plugin to get current git branch information and help with project versioning based on it.
@@ -30,6 +30,7 @@ This can be useful to automatically detect release branches if they follow certa
 Use-cases:
 - Can be useful if following branching development model and not willing to manually change the artifact/project version in every dev branch.
 - Can be used to set jar version, to configure uploadArchives or install, etc.
+- Anything else you might need current branch information for.
 
 - NOTE: if the project version is not set, it defaults to `unspecified` and so for DEV branch `feature-branch` it becomes `unspecified-feature-branch`!
 
@@ -38,7 +39,8 @@ Use-cases:
 Can be useful if executed outside git repos, in build systems (e.g. Jenkins), etc.
 
 ## Usage
-Clone this repo and install the plugin jar into the local maven repo.
+### Local 
+Clone this repo and install the plugin jar into your local maven repo.
 After you have the plugin jar in your local maven repository, add the below code to the build.gradle file:
 ```
 buildscript {
@@ -46,7 +48,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.0.0-SNAPSHOT")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.0.0")
     }
 }
 
@@ -54,6 +56,22 @@ apply plugin: 'lazy.zoo.gradle.git-data-plugin'
 ```
 You can also upload the plugin jar artifact to you personal/company registry (e.g. artifactory). 
 Then add the reference to it in the buildscript section from the above.
+### From gradle plugins repository
+Add the below code to the build.gradle file:
+```
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath("lazy.zoo.gradle:git-data-plugin:1.0.0")
+    }
+}
+
+apply plugin: 'lazy.zoo.gradle.git-data-plugin'
+```
 
 ## Tasks
 `gitData` task is registered to display the current git branch info.
@@ -65,6 +83,18 @@ Call the below from your gradle build:
 gitData.getCurrentBranchType() // one of: MASTER/DEV/RELEASE
 gitData.getCurrentBranchName() // name of the branch, without the grouping/folder prefixes (e.g. some/feature/foobar becomes foobar)
 gitData.getCurrentBranchFullName() // full name of the branch (e.g. some/feature/foobar stays some/feature/foobar)
-gitData.getProjectVersionWithBranch() // version with branch name
-gitData.getProjectVersionWithFullBranch() // version with full branch name, replacing all slashes with dashes
+gitData.getProjectVersionWithBranch() // version with branch name (e.g. feature/branch -> 1.2-branch-SNAPSHOT)
+gitData.getProjectVersionWithFullBranch() // version with full branch name, replacing all slashes with dashes (e.g. feature/branch -> 1.2-feature-branch-SNAPSHOT)
 ```
+
+# License
+The MIT License
+
+Copyright (c) 2020 sergii-kuku
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
