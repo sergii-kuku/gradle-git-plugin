@@ -27,8 +27,6 @@ gradlePlugin {
     plugins {
         create("gitDataPlugin") {
             id = "lazy.zoo.gradle.git-data-plugin"
-            displayName = "Git Data Plugin"
-            description = "Lightweight plugin to get current git branch information and help with project versioning based on it"
             implementationClass = "lazy.zoo.gradle.GitDataPlugin"
         }
     }
@@ -37,7 +35,14 @@ gradlePlugin {
 pluginBundle {
     website = "https://github.com/sergii-kuku/gradle-git-plugin"
     vcsUrl = "https://github.com/sergii-kuku/gradle-git-plugin.git"
-    tags = listOf("git", "versioning")
+
+    (plugins) {
+        "gitDataPlugin" {
+            displayName = "Git Data Plugin"
+            description = "Lightweight plugin to get current git branch information and help with project versioning based on it"
+            tags = listOf("git", "versioning")
+        }
+    }
 }
 
 // TASKS
