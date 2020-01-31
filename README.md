@@ -1,5 +1,5 @@
 # Gradle Git Plugin
-### Current plugin release version: 1.0.0
+### Release branch for version 1.0.0
 
 ## Description
 Lightweight plugin to get current git branch information and help with project versioning based on it.
