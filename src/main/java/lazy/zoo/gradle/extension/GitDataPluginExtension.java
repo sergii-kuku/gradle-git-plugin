@@ -6,33 +6,42 @@ import lazy.zoo.gradle.git.BranchType;
 public class GitDataPluginExtension {
     private final GitDataPlugin plugin;
 
+
     public GitDataPluginExtension(GitDataPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public String getCurrentBranchType() {
-        return plugin.getGitInfo().getCurrentBranchType().name();
+    public String getBranchType() {
+        return plugin.getGitInfo().getBranchType().name();
     }
 
-    public String getCurrentBranchName() {
-        return plugin.getGitInfo().getCurrentBranchName();
+    public String getShortBranchName() {
+        return plugin.getGitInfo().getShortBranchName();
     }
 
-    public String getCurrentBranchFullName() {
-        return plugin.getGitInfo().getCurrentBranchFullName();
+    public String getFullBranchName() {
+        return plugin.getGitInfo().getFullBranchName();
     }
 
-    public String getProjectVersionWithBranch() {
-        return parseVersionWithBranch(getCurrentBranchName());
+    public String getLastCommitHash() {
+        return plugin.getGitInfo().getLastCommitHash().orElse("");
     }
 
-    public String getProjectVersionWithFullBranch() {
-        return parseVersionWithBranch(getCurrentBranchFullName().replace("/", "-"));
+    public Integer getNumberOfCommits() {
+        return plugin.getGitInfo().getNumberOfCommits().orElse(-1);
+    }
+
+    public String getVersionWithShortBranchName() {
+        return parseVersionWithBranch(getShortBranchName());
+    }
+
+    public String getVersionWithFullBranchName() {
+        return parseVersionWithBranch(getFullBranchName().replace("/", "-"));
     }
 
     private String parseVersionWithBranch(String branchName) {
         String version = plugin.getProjectVersion();
-        if (plugin.getGitInfo() != null && plugin.getGitInfo().getCurrentBranchType() == BranchType.DEV_BRANCH) {
+        if (plugin.getGitInfo() != null && plugin.getGitInfo().getBranchType() == BranchType.DEV_BRANCH) {
             if (version.endsWith("-SNAPSHOT")) {
                 return version.replace("-SNAPSHOT", "-" + branchName + "-SNAPSHOT");
             } else {

@@ -11,15 +11,25 @@ public class GitDataPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
-        project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
+        final GitDataPluginExtension ext = project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
         this.projectVersion = project.getVersion().toString();
-        this.gitInfo = GitInfo.getGitInfo(project, project.getName(), project.getProperties().get("branchName") != null ? (String) project.getProperties().get("branchName") : null);
+        this.gitInfo = GitInfo.getGitInfo(project, project.getProperties().get("branchName") != null ? (String) project.getProperties().get("branchName") : null);
+
+        // TODO: GitInfo reduce boilerplate
+        // TODO: more version builders (e.g. including hash and nb of commits)
+        // TODO: more UTs
+        // TODO: custom release version patterns
 
         project.getTasks().register("gitData", task -> {
             task.setDescription("display git information");
             task.doLast(s -> {
-                project.getLogger().lifecycle("currentBranchType: {}", gitInfo.getCurrentBranchType().name());
-                project.getLogger().lifecycle("currentBranchName: {}", gitInfo.getCurrentBranchName());
+                project.getLogger().lifecycle("branchType: {}", gitInfo.getBranchType());
+                project.getLogger().lifecycle("shortBranchName: {}", gitInfo.getShortBranchName());
+                project.getLogger().lifecycle("fullBranchName: {}", gitInfo.getFullBranchName());
+                project.getLogger().lifecycle("lastCommitHash: {}", gitInfo.getLastCommitHash().orElse(""));
+                project.getLogger().lifecycle("numberOfCommits: {}", gitInfo.getNumberOfCommits().orElse(-1));
+                project.getLogger().lifecycle("versionWithShortBranchName: {}", ext.getVersionWithShortBranchName());
+                project.getLogger().lifecycle("versionWithFullBranchName: {}", ext.getVersionWithFullBranchName());
             });
         });
     }
