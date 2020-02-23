@@ -29,7 +29,7 @@ gradlePlugin {
         create("gitDataPlugin") {
             id = "lazy.zoo.gradle.git-data-plugin"
             displayName = "Git Data Plugin"
-            description = "Lightweight plugin to get current git branch information and help with project versioning based on it"
+            description = "Lightweight plugin to get specified (or current) git branch information"
             implementationClass = "lazy.zoo.gradle.GitDataPlugin"
         }
     }
