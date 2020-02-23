@@ -1,54 +1,45 @@
 package lazy.zoo.gradle.extension;
 
 import lazy.zoo.gradle.GitDataPlugin;
-import lazy.zoo.gradle.git.BranchType;
+
+import java.util.List;
 
 public class GitDataPluginExtension {
     private final GitDataPlugin plugin;
-
 
     public GitDataPluginExtension(GitDataPlugin plugin) {
         this.plugin = plugin;
     }
 
+    public String getInputBranchName() {
+        return plugin.gitInfo().getInputBranchName();
+    }
+
+    public boolean isValidGitBranch() {
+        return plugin.gitInfo().isValidGitBranch();
+    }
+
     public String getBranchType() {
-        return plugin.getGitInfo().getBranchType().name();
+        return plugin.gitInfo().getBranchType() != null ? plugin.gitInfo().getBranchType().name() : null;
     }
 
     public String getShortBranchName() {
-        return plugin.getGitInfo().getShortBranchName();
+        return plugin.gitInfo().getShortBranchName();
     }
 
     public String getFullBranchName() {
-        return plugin.getGitInfo().getFullBranchName();
+        return plugin.gitInfo().getFullBranchName();
     }
 
     public String getLastCommitHash() {
-        return plugin.getGitInfo().getLastCommitHash().orElse("");
+        return plugin.gitInfo().getLastCommitHash();
     }
 
     public Integer getNumberOfCommits() {
-        return plugin.getGitInfo().getNumberOfCommits().orElse(-1);
+        return plugin.gitInfo().getNumberOfCommits();
     }
 
-    public String getVersionWithShortBranchName() {
-        return parseVersionWithBranch(getShortBranchName());
-    }
-
-    public String getVersionWithFullBranchName() {
-        return parseVersionWithBranch(getFullBranchName().replace("/", "-"));
-    }
-
-    private String parseVersionWithBranch(String branchName) {
-        String version = plugin.getProjectVersion();
-        if (plugin.getGitInfo() != null && plugin.getGitInfo().getBranchType() == BranchType.DEV_BRANCH) {
-            if (version.endsWith("-SNAPSHOT")) {
-                return version.replace("-SNAPSHOT", "-" + branchName + "-SNAPSHOT");
-            } else {
-                return version + "-" + branchName;
-            }
-        } else {
-            return version;
-        }
+    public void setReleaseBranchPatterns(List<String> releaseBranchPatterns) {
+        plugin.refreshGitInfo(releaseBranchPatterns);
     }
 }

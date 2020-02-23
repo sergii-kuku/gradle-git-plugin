@@ -8,8 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 
-public class Cmd {
-    public static ExecuteResult executeCommands(Project project, List<String> command, File dir) {
+public class Cmd implements ICmdExecutor {
+    @Override
+    public ExecuteResult executeCommands(Project project, List<String> command, File dir) {
         ByteArrayOutputStream stdoutStream = new ByteArrayOutputStream();
         ByteArrayOutputStream stderrStream = new ByteArrayOutputStream();
         String cmdLine = String.join(" ", command);

@@ -21,6 +21,7 @@ java {
 
 dependencies {
     testImplementation("junit:junit:$junitVersion")
+    testCompile("org.easymock:easymock:4.2")
 }
 
 gradlePlugin {

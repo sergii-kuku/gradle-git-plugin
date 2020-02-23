@@ -5,7 +5,7 @@ public class ExecuteResult {
     private final String stdout;
     private final String stderr;
 
-    ExecuteResult(int exitVal, String stdout, String stderr) {
+    public ExecuteResult(int exitVal, String stdout, String stderr) {
         this.exitVal = exitVal;
         this.stdout = stdout;
         this.stderr = stderr;

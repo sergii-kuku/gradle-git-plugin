@@ -2,43 +2,48 @@ package lazy.zoo.gradle;
 
 import lazy.zoo.gradle.extension.GitDataPluginExtension;
 import lazy.zoo.gradle.git.GitInfo;
+import lazy.zoo.gradle.git.GitInfoFactory;
+import lazy.zoo.gradle.utils.Cmd;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
+import java.util.List;
+
 public class GitDataPlugin implements Plugin<Project> {
-    private String projectVersion;
+    private final GitInfoFactory gitInfoFactory = new GitInfoFactory(new Cmd());
     private GitInfo gitInfo;
+    private Project project;
 
     @Override
     public void apply(Project project) {
-        final GitDataPluginExtension ext = project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
-        this.projectVersion = project.getVersion().toString();
-        this.gitInfo = GitInfo.getGitInfo(project, project.getProperties().get("branchName") != null ? (String) project.getProperties().get("branchName") : null);
-
-        // TODO: GitInfo reduce boilerplate
-        // TODO: more version builders (e.g. including hash and nb of commits)
-        // TODO: more UTs
-        // TODO: custom release version patterns
+        project.getExtensions().create("gitData", GitDataPluginExtension.class, this);
+        this.project = project;
+        this.gitInfo = parseGitData(project);
 
         project.getTasks().register("gitData", task -> {
-            task.setDescription("display git information");
+            task.setDescription("display git branch information");
             task.doLast(s -> {
+                project.getLogger().lifecycle("inputBranchName: {}", gitInfo.getInputBranchName());
+                project.getLogger().lifecycle("isValidGitBranch: {}", gitInfo.isValidGitBranch());
                 project.getLogger().lifecycle("branchType: {}", gitInfo.getBranchType());
                 project.getLogger().lifecycle("shortBranchName: {}", gitInfo.getShortBranchName());
                 project.getLogger().lifecycle("fullBranchName: {}", gitInfo.getFullBranchName());
-                project.getLogger().lifecycle("lastCommitHash: {}", gitInfo.getLastCommitHash().orElse(""));
-                project.getLogger().lifecycle("numberOfCommits: {}", gitInfo.getNumberOfCommits().orElse(-1));
-                project.getLogger().lifecycle("versionWithShortBranchName: {}", ext.getVersionWithShortBranchName());
-                project.getLogger().lifecycle("versionWithFullBranchName: {}", ext.getVersionWithFullBranchName());
+                project.getLogger().lifecycle("lastCommitHash: {}", gitInfo.getLastCommitHash());
+                project.getLogger().lifecycle("numberOfCommits: {}", gitInfo.getNumberOfCommits());
             });
         });
     }
 
-    public String getProjectVersion() {
-        return projectVersion;
+    public GitInfo gitInfo() {
+        return gitInfo;
     }
 
-    public GitInfo getGitInfo() {
-        return gitInfo;
+    private GitInfo parseGitData(Project project) {
+        return gitInfoFactory.getGitInfo(project, project.getProperties().get("branchName") != null ? (String) project.getProperties().get("branchName") : null);
+    }
+
+    public void refreshGitInfo(List<String> releaseBranchPatterns) {
+        gitInfoFactory.setReleaseBranchPatterns(releaseBranchPatterns);
+        gitInfo = parseGitData(project);
     }
 }
