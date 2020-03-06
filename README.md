@@ -59,7 +59,14 @@ apply plugin: 'lazy.zoo.gradle.git-data-plugin'
 You can also upload the plugin jar artifact to you personal/company registry (e.g. artifactory). 
 Then add the reference to it in the buildscript section from the above.
 ### From gradle plugins repository
-Add the below code to the build.gradle file:
+Add the below code to the build.gradle file.
+- Using plugins DSL:
+```
+plugins {
+  id "lazy.zoo.gradle.git-data-plugin" version "1.1.0"
+}
+```
+- Using legacy plugin application:
 ```
 buildscript {
     repositories {
