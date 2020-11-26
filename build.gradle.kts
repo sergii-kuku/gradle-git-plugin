@@ -7,7 +7,7 @@ buildscript {
 }
 
 plugins {
-    id("com.gradle.plugin-publish") version "0.10.1"
+    id("com.gradle.plugin-publish") version "0.12.0"
     id("java-gradle-plugin")
     id("maven")
     jacoco
