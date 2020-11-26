@@ -1,5 +1,5 @@
 # Gradle Git Plugin
-### Latest release version: 1.1.0
+### Latest release version: 1.2.0
 
 ## Description
 Lightweight plugin to get specified (or current) git branch information.
@@ -9,28 +9,39 @@ Lightweight plugin to get specified (or current) git branch information.
 
 ### Available data
 The plugin data is accessible via it's extension: gitData
-Call the below from your gradle build:
+Call the below from your gradle build script:
 ```
-gitData.getInputBranchName() // git branch parameter value if present (-PbranchName). "HEAD" otherwise (points to current checked out branch)
-gitData.isValidGitBranch() // true if "git rev-parse --verify $inputBranchName" returns with 0 exit code
-gitData.getBranchType() // one of: MASTER/DEV/RELEASE
-gitData.getShortBranchName() // name of the branch, without the grouping/folder prefixes (e.g. some/feature/foobar becomes foobar)
-gitData.getFullBranchName() // full name of the branch (e.g. some/feature/foobar stays some/feature/foobar)
-gitData.getLastCommitHash() // short hash of the last commit on the specified branch
-gitData.getNumberOfCommits() // number of commits in the specified branch
+gitData.isValidGitBranch() // false if unidentified-git-branch, otherwise true
+gitData.getInputBranchName() // git branch parameter value if present (-PbranchName). null otherwise (the logic will point to current HEAD)
+gitData.getBranchType() // one of: MASTER/DEV_BRANCH/RELEASE_BRANCH. DEV_BRANCH for unidentified-git-branch
+gitData.getShortBranchName() // short name of the branch, without the grouping/folder prefixes (e.g. some/feature/foobar becomes foobar). unidentified-git-branch if  invalid git rev
+gitData.getFullBranchName() // full name of the branch (e.g. some/feature/foobar becomes origin/some/feature/foobar, some-tag becomes refs/tags/some-tag). unidentified-git-branch if invalid git rev
+gitData.getLastCommitHash() // short hash of the current commit. null if unidentified-git-branch
+gitData.getNumberOfCommits() // number of commits in the specified branch. null if unidentified-git-branch
+gitData.getTags() // tags pointing to current commit as in git tag -l --points-at rev. empty list if unidentified-git-branch
 ```
 
 ### Branch type
 Based on the current branch name, the plugin defines the branch type. 
 It can be one of:
 - MASTER: if being on master branch.
-- RELEASE: by default, if the branch name matches any of the following patters:
+- RELEASE_BRANCH: by default, if the branch name matches any of the following patters:
 ```
 projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+)\\.[XYZ]"
 projectName + "-([0-9]+\\.[0-9]+)\\.[XYZ]"
 projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)"
+^([0-9]+\\.[0-9]+\\.[0-9]+)$
+^([0-9]+\\.[0-9]+)$
+^([0-9]+)$
+^v([0-9]+\\.[0-9]+\\.[0-9]+)$
+^v([0-9]+\\.[0-9]+)$
+^v([0-9]+)$
 ```
-- DEV: all other branches.
+
+NOTE: this logic may eventually fail if you are pointing to detached head commit with only numeric values in the hash (`^([0-9]+)$` pattern kicks in). 
+This is a corner-case which is consciously not handled :)
+
+- DEV_BRANCH: all other branches.
 
 ### Release branch additional patterns
 Patterns to define release branches can be extended using the plugin extension method: `gitData.setReleaseBranchPatterns(List<String>)`
@@ -50,7 +61,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.1.0")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.0")
     }
 }
 
@@ -63,7 +74,7 @@ Add the below code to the build.gradle file.
 - Using plugins DSL:
 ```
 plugins {
-  id "lazy.zoo.gradle.git-data-plugin" version "1.1.0"
+  id "lazy.zoo.gradle.git-data-plugin" version "1.2.0"
 }
 ```
 - Using legacy plugin application:
@@ -75,7 +86,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.1.0")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.0")
     }
 }
 

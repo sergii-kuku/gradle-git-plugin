@@ -20,19 +20,22 @@ import static lazy.zoo.gradle.git.BranchType.RELEASE_BRANCH;
 
 @RunWith(Parameterized.class)
 public class GitInfoFactoryParamTest {
+    private static final String SOME_TAG = "some_tag";
+    private static final String SOME_HASH = "some_hash";
+
     private Project project = DataUtils.getProject();
     private ICmdExecutor cmd = EasyMock.strictMock(ICmdExecutor.class);
     private GitInfoFactory gIF = new GitInfoFactory(cmd);
 
     private void okGitExecutionResults(String rev) {
         EasyMock.reset(cmd);
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--verify", rev), project.getProjectDir()))
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--verify", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, rev, null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--abbrev-ref", rev), project.getProjectDir()))
-                .andReturn(new ExecuteResult(0, rev, null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--short", rev), project.getProjectDir()))
-                .andReturn(new ExecuteResult(0, "some_hash", null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", rev), project.getProjectDir()))
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--short", "origin/" + rev), project.getProjectDir()))
+                .andReturn(new ExecuteResult(0, SOME_HASH, null));
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "tag", "-l", "--points-at", "origin/" + rev), project.getProjectDir()))
+                .andReturn(new ExecuteResult(0, SOME_TAG, null));
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, "128", null));
         EasyMock.replay(cmd);
     }
@@ -40,27 +43,27 @@ public class GitInfoFactoryParamTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Iterable<Object[]> data() {
         return asList(new Object[][]{
-                {"feature-branch", DEV_BRANCH, "feature-branch"},
-                {"origin/feature-branch", DEV_BRANCH, "feature-branch"},
-                {"kind/of/long/path/to/feature-branch", DEV_BRANCH, "feature-branch"},
-                {"master", MASTER, "master"},
-                {"origin/master", MASTER, "master"},
-                {PROJECT_NAME + "-1.2.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.X"},
-                {PROJECT_NAME + "-1.2.0.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.X"},
-                {PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0"},
-                {"release/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0"},
-                {"release/beta/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0"},
+                {"feature-branch", DEV_BRANCH, "feature-branch", "origin/feature-branch"},
+                {"kind/of/long/path/to/feature-branch", DEV_BRANCH, "feature-branch", "origin/kind/of/long/path/to/feature-branch"},
+                {"master", MASTER, "master", "origin/master"},
+                {PROJECT_NAME + "-1.2.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.X", "origin/" + PROJECT_NAME + "-1.2.X"},
+                {PROJECT_NAME + "-1.2.0.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.X", "origin/" + PROJECT_NAME + "-1.2.0.X"},
+                {PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/" + PROJECT_NAME + "-1.2.0.0"},
+                {"release/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/release/" + PROJECT_NAME + "-1.2.0.0"},
+                {"release/beta/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/release/beta/" + PROJECT_NAME + "-1.2.0.0"},
         });
     }
 
     private final String rev;
     private final BranchType expectedType;
     private final String shortName;
+    private final String fullName;
 
-    public GitInfoFactoryParamTest(String rev, BranchType expectedType, String shortName) {
+    public GitInfoFactoryParamTest(String rev, BranchType expectedType, String shortName, String fullName) {
         this.rev = rev;
         this.expectedType = expectedType;
         this.shortName = shortName;
+        this.fullName = fullName;
     }
 
     /**
@@ -72,6 +75,8 @@ public class GitInfoFactoryParamTest {
         GitInfo gitInfo = gIF.getGitInfo(project, rev);
         Assert.assertEquals(expectedType, gitInfo.getBranchType());
         Assert.assertEquals(shortName, gitInfo.getShortBranchName());
-        Assert.assertEquals(rev, gitInfo.getFullBranchName());
+        Assert.assertEquals(fullName, gitInfo.getFullBranchName());
+        Assert.assertEquals(SOME_HASH, gitInfo.getLastCommitHash());
+        Assert.assertEquals(SOME_TAG, gitInfo.getTags().get(0));
     }
 }

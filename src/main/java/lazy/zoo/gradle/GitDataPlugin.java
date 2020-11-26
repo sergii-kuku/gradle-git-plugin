@@ -22,15 +22,7 @@ public class GitDataPlugin implements Plugin<Project> {
 
         project.getTasks().register("gitData", task -> {
             task.setDescription("display git branch information");
-            task.doLast(s -> {
-                project.getLogger().lifecycle("inputBranchName: {}", gitInfo.getInputBranchName());
-                project.getLogger().lifecycle("isValidGitBranch: {}", gitInfo.isValidGitBranch());
-                project.getLogger().lifecycle("branchType: {}", gitInfo.getBranchType());
-                project.getLogger().lifecycle("shortBranchName: {}", gitInfo.getShortBranchName());
-                project.getLogger().lifecycle("fullBranchName: {}", gitInfo.getFullBranchName());
-                project.getLogger().lifecycle("lastCommitHash: {}", gitInfo.getLastCommitHash());
-                project.getLogger().lifecycle("numberOfCommits: {}", gitInfo.getNumberOfCommits());
-            });
+            task.doLast(s -> project.getLogger().lifecycle(gitInfo.toString()));
         });
     }
 

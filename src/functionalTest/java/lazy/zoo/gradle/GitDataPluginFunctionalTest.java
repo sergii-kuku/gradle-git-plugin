@@ -35,7 +35,6 @@ public class GitDataPluginFunctionalTest {
         showGitInfo.withProjectDir(projectDir);
         BuildResult showPluginsResult = showGitInfo.build();
         assertTrue(showPluginsResult.getOutput().contains("inputBranchName"));
-        assertTrue(showPluginsResult.getOutput().contains("isValidGitBranch"));
     }
 
     private static String getResourceFileAsString(String fileName) throws IOException {

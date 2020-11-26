@@ -39,6 +39,10 @@ public class GitDataPluginExtension {
         return plugin.gitInfo().getNumberOfCommits();
     }
 
+    public List<String> getTags() {
+        return plugin.gitInfo().getTags();
+    }
+
     public void setReleaseBranchPatterns(List<String> releaseBranchPatterns) {
         plugin.refreshGitInfo(releaseBranchPatterns);
     }

@@ -21,13 +21,13 @@ public class GitInfoFactoryTest {
 
     private void okGitExecutionResults(String rev) {
         EasyMock.reset(cmd);
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--verify", rev), project.getProjectDir()))
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--verify", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, rev, null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--abbrev-ref", rev), project.getProjectDir()))
-                .andReturn(new ExecuteResult(0, rev, null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--short", rev), project.getProjectDir()))
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--short", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, "some_hash", null));
-        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", rev), project.getProjectDir()))
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "tag", "-l", "--points-at", "origin/" + rev), project.getProjectDir()))
+                .andReturn(new ExecuteResult(0, "some_hash", null));
+        EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, "128", null));
         EasyMock.replay(cmd);
     }
@@ -39,14 +39,14 @@ public class GitInfoFactoryTest {
     public void testInvalidGitInfo() {
         Project project = DataUtils.getProject();
         final GitDataPluginExtension ext = project.getExtensions().getByType(GitDataPluginExtension.class);
-        Assert.assertEquals("HEAD", ext.getInputBranchName());
         Assert.assertFalse(ext.isValidGitBranch());
-
-        Assert.assertNull(ext.getBranchType());
-        Assert.assertNull(ext.getShortBranchName());
-        Assert.assertNull(ext.getFullBranchName());
+        Assert.assertNull(ext.getInputBranchName());
+        Assert.assertEquals(BranchType.DEV_BRANCH.name(), ext.getBranchType());
+        Assert.assertEquals(GitInfoFactory.UNIDENTIFIED_BRANCH, ext.getShortBranchName());
+        Assert.assertEquals(GitInfoFactory.UNIDENTIFIED_BRANCH, ext.getFullBranchName());
         Assert.assertNull(ext.getLastCommitHash());
         Assert.assertNull(ext.getNumberOfCommits());
+        Assert.assertEquals(Collections.emptyList(), ext.getTags());
     }
 
     @Test
@@ -59,6 +59,7 @@ public class GitInfoFactoryTest {
         okGitExecutionResults(defaultReleaseVersion);
         GitInfo gitInfo = gIF.getGitInfo(project, defaultReleaseVersion);
         Assert.assertEquals(BranchType.RELEASE_BRANCH, gitInfo.getBranchType());
+        Assert.assertTrue(gitInfo.isValidGitBranch());
 
         // new pattern does not work
         okGitExecutionResults(additionalReleaseVersion);

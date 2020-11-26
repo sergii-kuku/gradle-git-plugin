@@ -1,7 +1,16 @@
+buildscript {
+    repositories {
+        maven {
+            setUrl("https://plugins.gradle.org/m2/")
+        }
+    }
+}
+
 plugins {
     id("com.gradle.plugin-publish") version "0.10.1"
     id("java-gradle-plugin")
     id("maven")
+    jacoco
 }
 
 group = "lazy.zoo.gradle"
@@ -21,7 +30,7 @@ java {
 
 dependencies {
     testImplementation("junit:junit:$junitVersion")
-    testCompile("org.easymock:easymock:4.2")
+    testImplementation("org.easymock:easymock:4.2")
 }
 
 gradlePlugin {
@@ -64,6 +73,15 @@ tasks {
 
     clean {
         delete("out")
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.setEnabled(true)
+            csv.setEnabled(false)
+            html.setDestination(file("${buildDir}/reports/jacoco"))
+        }
+        dependsOn(findByName("test"))
     }
 }
 
