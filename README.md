@@ -4,6 +4,12 @@
 ## Description
 Lightweight plugin to get specified (or current) git branch information.
 
+## What's missing
+In order to be more compliant with GitOps flow, planned changes are:
+* Add logic to detect release tag based on SemVer pattern:
+    * If such tag is detected on current commit: retrieve SemVer from the tag.
+    * If not - detect previous SemVer tag if any (as in git describe --tags) and return it as dev version in such case (including commits offset and hash).
+
 ### Tasks
 `gitData` task is registered to display the git branch info.
 
