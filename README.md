@@ -4,7 +4,7 @@
 ## Description
 Lightweight plugin to get specified (or current) git branch information.
 
-## What's missing
+## What's missing
 In order to be more compliant with GitOps flow, planned changes are:
 * Add logic to detect release tag based on SemVer pattern:
     * If such tag is detected on current commit: retrieve SemVer from the tag.
