@@ -1,5 +1,5 @@
 # Gradle Git Plugin
-### Latest release version: 1.2.0
+### Latest release version: 1.2.1
 
 ## Description
 Lightweight plugin to get specified (or current) git branch information.
@@ -63,7 +63,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.2.0")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.1")
     }
 }
 
@@ -76,7 +76,7 @@ Add the below code to the build.gradle file.
 - Using plugins DSL:
 ```
 plugins {
-  id "lazy.zoo.gradle.git-data-plugin" version "1.2.0"
+  id "lazy.zoo.gradle.git-data-plugin" version "1.2.1"
 }
 ```
 - Using legacy plugin application:
@@ -88,7 +88,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.2.0")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.1")
     }
 }
 
