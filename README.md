@@ -38,6 +38,8 @@ projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)"
 ^v([0-9]+)$
 ```
 
+`gitData.getShortBranchName()` is used with the above patterns.
+
 NOTE: this logic may eventually fail if you are pointing to detached head commit with only numeric values in the hash (`^([0-9]+)$` pattern kicks in). 
 This is a corner-case which is consciously not handled :)
 

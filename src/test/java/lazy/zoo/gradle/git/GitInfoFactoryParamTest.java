@@ -20,12 +20,14 @@ import static lazy.zoo.gradle.git.BranchType.RELEASE_BRANCH;
 
 @RunWith(Parameterized.class)
 public class GitInfoFactoryParamTest {
-    private static final String SOME_TAG = "some_tag";
-    private static final String SOME_HASH = "some_hash";
+    private final String SOME_TAG = "some_tag";
+    private final String SOME_HASH = "some_hash";
+    private final String NB_COMMITS = "128";
 
     private Project project = DataUtils.getProject();
     private ICmdExecutor cmd = EasyMock.strictMock(ICmdExecutor.class);
     private GitInfoFactory gIF = new GitInfoFactory(cmd);
+    ;
 
     private void okGitExecutionResults(String rev) {
         EasyMock.reset(cmd);
@@ -36,7 +38,7 @@ public class GitInfoFactoryParamTest {
         EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "tag", "-l", "--points-at", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, SOME_TAG, null));
         EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", "origin/" + rev), project.getProjectDir()))
-                .andReturn(new ExecuteResult(0, "128", null));
+                .andReturn(new ExecuteResult(0, NB_COMMITS, null));
         EasyMock.replay(cmd);
     }
 
@@ -44,13 +46,8 @@ public class GitInfoFactoryParamTest {
     public static Iterable<Object[]> data() {
         return asList(new Object[][]{
                 {"feature-branch", DEV_BRANCH, "feature-branch", "origin/feature-branch"},
-                {"kind/of/long/path/to/feature-branch", DEV_BRANCH, "feature-branch", "origin/kind/of/long/path/to/feature-branch"},
                 {"master", MASTER, "master", "origin/master"},
                 {PROJECT_NAME + "-1.2.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.X", "origin/" + PROJECT_NAME + "-1.2.X"},
-                {PROJECT_NAME + "-1.2.0.X", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.X", "origin/" + PROJECT_NAME + "-1.2.0.X"},
-                {PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/" + PROJECT_NAME + "-1.2.0.0"},
-                {"release/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/release/" + PROJECT_NAME + "-1.2.0.0"},
-                {"release/beta/" + PROJECT_NAME + "-1.2.0.0", RELEASE_BRANCH, PROJECT_NAME + "-1.2.0.0", "origin/release/beta/" + PROJECT_NAME + "-1.2.0.0"},
         });
     }
 
@@ -78,5 +75,6 @@ public class GitInfoFactoryParamTest {
         Assert.assertEquals(fullName, gitInfo.getFullBranchName());
         Assert.assertEquals(SOME_HASH, gitInfo.getLastCommitHash());
         Assert.assertEquals(SOME_TAG, gitInfo.getTags().get(0));
+        Assert.assertEquals(Integer.valueOf(NB_COMMITS), gitInfo.getNumberOfCommits());
     }
 }

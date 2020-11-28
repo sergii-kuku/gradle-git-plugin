@@ -26,7 +26,7 @@ public class GitInfoFactoryTest {
         EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-parse", "--short", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, "some_hash", null));
         EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "tag", "-l", "--points-at", "origin/" + rev), project.getProjectDir()))
-                .andReturn(new ExecuteResult(0, "some_hash", null));
+                .andReturn(new ExecuteResult(0, "some_tag", null));
         EasyMock.expect(cmd.executeCommands(project, Arrays.asList("git", "rev-list", "--count", "origin/" + rev), project.getProjectDir()))
                 .andReturn(new ExecuteResult(0, "128", null));
         EasyMock.replay(cmd);
@@ -50,33 +50,51 @@ public class GitInfoFactoryTest {
     }
 
     @Test
-    public void testReleaseBranchPatterns() {
-        final String defaultReleaseVersion = "release/beta/" + PROJECT_NAME + "-1.2.0.0";
+    public void testAdditionalReleasePatterns() {
+        final String defaultReleaseVersion = PROJECT_NAME + "-1.2.0.0";
         final String additionalReleasePattern = "(.*)foobar(.*)";
-        final String additionalReleaseVersion = "rel/foobar-X.123";
+        final String additionalReleaseVersion = "release-foobar-X.123";
 
         // default pattern should work
-        okGitExecutionResults(defaultReleaseVersion);
-        GitInfo gitInfo = gIF.getGitInfo(project, defaultReleaseVersion);
-        Assert.assertEquals(BranchType.RELEASE_BRANCH, gitInfo.getBranchType());
-        Assert.assertTrue(gitInfo.isValidGitBranch());
-
+        assertReleaseBranch(defaultReleaseVersion);
         // new pattern does not work
-        okGitExecutionResults(additionalReleaseVersion);
-        gitInfo = gIF.getGitInfo(project, additionalReleaseVersion);
-        Assert.assertEquals(BranchType.DEV_BRANCH, gitInfo.getBranchType());
-
+        assertBranchType(BranchType.DEV_BRANCH, additionalReleaseVersion);
         // set additional release pattern
-        gIF.setReleaseBranchPatterns(Collections.singletonList(additionalReleasePattern));
-
+        gIF.setAdditionalReleaseBranchPatterns(Collections.singletonList(additionalReleasePattern));
         // default pattern still works
-        okGitExecutionResults(defaultReleaseVersion);
-        gitInfo = gIF.getGitInfo(project, defaultReleaseVersion);
-        Assert.assertEquals(BranchType.RELEASE_BRANCH, gitInfo.getBranchType());
-
+        assertReleaseBranch(defaultReleaseVersion);
         // additional pattern works too
-        okGitExecutionResults(additionalReleaseVersion);
-        gitInfo = gIF.getGitInfo(project, additionalReleaseVersion);
-        Assert.assertEquals(BranchType.RELEASE_BRANCH, gitInfo.getBranchType());
+        assertReleaseBranch(additionalReleaseVersion);
+    }
+
+    @Test
+    public void testBranchTypes() {
+        final String[] releaseBranches = new String[] {
+                PROJECT_NAME + "-1.2.0.0",
+                PROJECT_NAME + "-1.2.0.X",
+                PROJECT_NAME + "-1.2.X",
+                "release-" + PROJECT_NAME + "-1.2.0.0",
+                "foo-" + PROJECT_NAME + "-1.2.0.X",
+                "impossible_in_short_ver/" + PROJECT_NAME + "-1.2.X",
+                "1.1.1", "1.1", "1",
+                "v1.1.1", "v1.1", "v1",
+        };
+        for (String branchName : releaseBranches) {
+            assertReleaseBranch(branchName);
+        }
+
+        assertBranchType(BranchType.MASTER, "master");
+        assertBranchType(BranchType.DEV_BRANCH, "masterx");
+    }
+
+    private void assertReleaseBranch(String shortGitRev) {
+        assertBranchType(BranchType.RELEASE_BRANCH, shortGitRev);
+    }
+
+    private void assertBranchType(BranchType branchType, String shortGitRev) {
+        okGitExecutionResults(shortGitRev);
+        GitInfo gitInfo = gIF.getGitInfo(project, shortGitRev);
+        Assert.assertEquals(branchType, gitInfo.getBranchType());
+        Assert.assertTrue(gitInfo.isValidGitBranch());
     }
 }

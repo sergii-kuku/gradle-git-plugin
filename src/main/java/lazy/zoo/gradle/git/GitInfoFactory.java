@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class GitInfoFactory {
@@ -16,7 +17,17 @@ public class GitInfoFactory {
     private static final String HEAD = "HEAD";
 
     private final ICmdExecutor cmdExec;
-    private final List<String> releaseBranchPatterns = new ArrayList<>();
+
+    private final List<Pattern> staticReleaseBranchPatterns = Arrays.asList(
+            Pattern.compile("^([0-9]+\\.[0-9]+\\.[0-9]+)$"),
+            Pattern.compile("^([0-9]+\\.[0-9]+)$"),
+            Pattern.compile("^([0-9]+)$"),
+            Pattern.compile("^v([0-9]+\\.[0-9]+\\.[0-9]+)$"),
+            Pattern.compile("^v([0-9]+\\.[0-9]+)$"),
+            Pattern.compile("^v([0-9]+)$")
+    );
+
+    private final List<String> additionalReleaseBranchPatterns = new ArrayList<>();
 
     public GitInfoFactory(ICmdExecutor cmdExec) {
         this.cmdExec = cmdExec;
@@ -37,7 +48,7 @@ public class GitInfoFactory {
         final String commitId = getShortHash(project, currentBranchFull);
         final List<String> tags = getTags(project, currentBranchFull);
         final Integer numberOfCommits = getNumberOfCommits(project, currentBranchFull);
-        BranchType branchType = getBranchType(project.getName(), currentBranchFull, currentBranchShort);
+        BranchType branchType = getBranchType(project.getName(), currentBranchShort);
 
         project.getLogger().lifecycle("gitData returned with branchType = {}, short rev = {}, full rev = {}, " +
                         "commit hash = {}, tags = {}, number of commits = {}", branchType, currentBranchShort, currentBranchFull, commitId,
@@ -133,34 +144,29 @@ public class GitInfoFactory {
         }, null);
     }
 
-    public void setReleaseBranchPatterns(List<String> releaseBranchPatterns) {
-        if (releaseBranchPatterns != null) {
-            this.releaseBranchPatterns.clear();
-            this.releaseBranchPatterns.addAll(releaseBranchPatterns);
+    public void setAdditionalReleaseBranchPatterns(List<String> additionalReleaseBranchPatterns) {
+        if (additionalReleaseBranchPatterns != null) {
+            this.additionalReleaseBranchPatterns.clear();
+            this.additionalReleaseBranchPatterns.addAll(additionalReleaseBranchPatterns);
         }
     }
 
-    private BranchType getBranchType(String projectName, String fullBranchName, String shortBranchName) {
+    private BranchType getBranchType(String projectName, String shortBranchName) {
         if ("master".equals(shortBranchName)) {
             return BranchType.MASTER;
-        } else if (checkReleasePatterns(projectName, fullBranchName)) {
+        } else if (checkReleasePatterns(projectName, shortBranchName)) {
             return BranchType.RELEASE_BRANCH;
         } else {
             return BranchType.DEV_BRANCH;
         }
     }
 
-    private boolean checkReleasePatterns(String projectName, String fullBranchName) {
-        return releaseBranchPatterns.stream().anyMatch(fullBranchName::matches)
-                || fullBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+)\\.[XYZ]")
-                || fullBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+)\\.[XYZ]")
-                || fullBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)")
-                || fullBranchName.matches("^([0-9]+\\.[0-9]+\\.[0-9]+)$")
-                || fullBranchName.matches("^([0-9]+\\.[0-9]+)$")
-                || fullBranchName.matches("^([0-9]+)$")
-                || fullBranchName.matches("^v([0-9]+\\.[0-9]+\\.[0-9]+)$")
-                || fullBranchName.matches("^v([0-9]+\\.[0-9]+)$")
-                || fullBranchName.matches("^v([0-9]+)$");
+    private boolean checkReleasePatterns(String projectName, String shortBranchName) {
+        return additionalReleaseBranchPatterns.stream().anyMatch(shortBranchName::matches)
+                || staticReleaseBranchPatterns.stream().anyMatch(pattern -> pattern.matcher(shortBranchName).matches())
+                || shortBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+)\\.[XYZ]")
+                || shortBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+)\\.[XYZ]")
+                || shortBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)");
     }
 
     private String parseStdOutAsString(ExecuteResult er) {

@@ -35,7 +35,7 @@ public class GitDataPlugin implements Plugin<Project> {
     }
 
     public void refreshGitInfo(List<String> releaseBranchPatterns) {
-        gitInfoFactory.setReleaseBranchPatterns(releaseBranchPatterns);
+        gitInfoFactory.setAdditionalReleaseBranchPatterns(releaseBranchPatterns);
         gitInfo = parseGitData(project);
     }
 }
