@@ -48,7 +48,7 @@ public class GitInfoFactory {
         final String commitId = getShortHash(project, currentBranchFull);
         final List<String> tags = getTags(project, currentBranchFull);
         final Integer numberOfCommits = getNumberOfCommits(project, currentBranchFull);
-        BranchType branchType = getBranchType(project.getName(), currentBranchShort);
+        BranchType branchType = getBranchType(project.getName(), currentBranchShort, currentBranchFull);
 
         project.getLogger().lifecycle("gitData returned with branchType = {}, short rev = {}, full rev = {}, " +
                         "commit hash = {}, tags = {}, number of commits = {}", branchType, currentBranchShort, currentBranchFull, commitId,
@@ -151,18 +151,18 @@ public class GitInfoFactory {
         }
     }
 
-    private BranchType getBranchType(String projectName, String shortBranchName) {
+    private BranchType getBranchType(String projectName, String shortBranchName, String fullBranchName) {
         if ("master".equals(shortBranchName)) {
             return BranchType.MASTER;
-        } else if (checkReleasePatterns(projectName, shortBranchName)) {
+        } else if (checkReleasePatterns(projectName, shortBranchName, fullBranchName)) {
             return BranchType.RELEASE_BRANCH;
         } else {
             return BranchType.DEV_BRANCH;
         }
     }
 
-    private boolean checkReleasePatterns(String projectName, String shortBranchName) {
-        return additionalReleaseBranchPatterns.stream().anyMatch(shortBranchName::matches)
+    private boolean checkReleasePatterns(String projectName, String shortBranchName, String fullBranchName) {
+        return additionalReleaseBranchPatterns.stream().anyMatch(fullBranchName::matches)
                 || staticReleaseBranchPatterns.stream().anyMatch(pattern -> pattern.matcher(shortBranchName).matches())
                 || shortBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+\\.[0-9]+)\\.[XYZ]")
                 || shortBranchName.matches("(.*)" + projectName + "-([0-9]+\\.[0-9]+)\\.[XYZ]")
