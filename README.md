@@ -1,5 +1,5 @@
 # Gradle Git Plugin
-### Latest release version: 1.2.1
+### Latest release version: 1.2.2
 
 ## Description
 Lightweight plugin to get specified (or current) git branch information.
@@ -56,6 +56,8 @@ Patterns to define release branches can be extended using the plugin extension m
 Example: `gitData.setReleaseBranchPatterns(["(.*)foobar(.*)", "^release-[0-9]+"])`
 This can be useful to automatically detect release branches if they follow certain naming conventions.
 
+`gitData.getFullBranchName()` is used with user defined patterns.
+
 ## Parameters
 `-PbranchName` - git branch name override to use instead of the current git branch (if none specified, the plugin points to `HEAD`).
 
@@ -69,7 +71,7 @@ buildscript {
         mavenLocal()
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.2.1")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.2")
     }
 }
 
@@ -82,7 +84,7 @@ Add the below code to the build.gradle file.
 - Using plugins DSL:
 ```
 plugins {
-  id "lazy.zoo.gradle.git-data-plugin" version "1.2.1"
+  id "lazy.zoo.gradle.git-data-plugin" version "1.2.2"
 }
 ```
 - Using legacy plugin application:
@@ -94,7 +96,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("lazy.zoo.gradle:git-data-plugin:1.2.1")
+        classpath("lazy.zoo.gradle:git-data-plugin:1.2.2")
     }
 }
 
