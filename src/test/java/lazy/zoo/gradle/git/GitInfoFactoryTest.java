@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static lazy.zoo.gradle.DataUtils.PROJECT_NAME;
 
@@ -52,24 +53,30 @@ public class GitInfoFactoryTest {
     @Test
     public void testAdditionalReleasePatterns() {
         final String defaultReleaseVersion = PROJECT_NAME + "-1.2.0.0";
-        final String additionalReleasePattern = "(.*)foobar(.*)";
-        final String additionalReleaseVersion = "release-foobar-X.123";
+        final List<String> additionalReleasePatterns = Arrays.asList("(.*)foobar(.*)",
+                "(.*)release/(.*)", "(.*)hotfix/(.*)");
+        final List<String> additionalReleaseVersions = Arrays.asList("release-foobar-X.123",
+                "release/someRel", "hotfix/somFix");
 
         // default pattern should work
         assertReleaseBranch(defaultReleaseVersion);
         // new pattern does not work
-        assertBranchType(BranchType.DEV_BRANCH, additionalReleaseVersion);
+        for (String additionalReleaseVersion : additionalReleaseVersions) {
+            assertBranchType(BranchType.DEV_BRANCH, additionalReleaseVersion);
+        }
         // set additional release pattern
-        gIF.setAdditionalReleaseBranchPatterns(Collections.singletonList(additionalReleasePattern));
+        gIF.setAdditionalReleaseBranchPatterns(additionalReleasePatterns);
         // default pattern still works
         assertReleaseBranch(defaultReleaseVersion);
         // additional pattern works too
-        assertReleaseBranch(additionalReleaseVersion);
+        for (String additionalReleaseVersion : additionalReleaseVersions) {
+            assertReleaseBranch(additionalReleaseVersion);
+        }
     }
 
     @Test
     public void testBranchTypes() {
-        final String[] releaseBranches = new String[] {
+        final String[] releaseBranches = new String[]{
                 PROJECT_NAME + "-1.2.0.0",
                 PROJECT_NAME + "-1.2.0.X",
                 PROJECT_NAME + "-1.2.X",
