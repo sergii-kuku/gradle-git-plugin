@@ -1,3 +1,4 @@
+# [No Longer Maintained] This project is no longer maintained
 # Gradle Git Plugin
 ### Latest release version: 1.2.2
 
